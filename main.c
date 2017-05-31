@@ -9,7 +9,7 @@
 #define SHIFT_FILE 0
 
 typedef struct list {
-    unsigned long long int data;
+    int data;
     int symbol;
     struct list *next;
     struct list *left;
@@ -22,7 +22,7 @@ typedef struct list {
 * b-остаток от деления
 * return-целый часть
 */
-long separate(long int a, long int *b) {
+long separate(int a,int *b) {
     *b = a % MAXVAL;
     return (a / MAXVAL);
 }
@@ -32,7 +32,7 @@ long separate(long int a, long int *b) {
 * tmp->data-частота символа
 * tmp->symbol-символ
 */
-void push(list **head,unsigned long long int data, int symbol) {
+void push(list **head, int data, int symbol) {
     list *tmp = (list *)malloc(sizeof(list));
     tmp->data = data;
     tmp->symbol = symbol;
@@ -46,7 +46,7 @@ void push(list **head,unsigned long long int data, int symbol) {
 /*
 * cоздаём стек из встречающихся символов
 */
-void create_list(list **head, unsigned long long int *array) {
+void create_list(list **head, int *array) {
     int i;
     for (i = 0; i < MAXVAL; i++) {
         if (array[i] != 0)
@@ -57,8 +57,8 @@ void create_list(list **head, unsigned long long int *array) {
 /*
 * создаём таблицу частот символов
 */
-void create_table(unsigned char *array, unsigned  long long int *table, long int size) {
-    for (long int i = 0; i < size; i++) {
+void create_table(unsigned char *array, int *table, int size) {
+    for (int i = 0; i < size; i++) {
         table[(int)array[i]]++;
     }
 }
@@ -95,14 +95,14 @@ void deleteNth(list **head, int n) {
 * count-хранит частоту символа
 * return-символ с минимальной частотой
 */
-list *find_min(list *head, unsigned long long int *count, int *position) {
+list *find_min(list *head, int *count, int *position) {
     list *tmp = malloc(sizeof(list));
     if (tmp == NULL) {
         exit(0);
     }
     int i = 0;
     tmp = head;
-    unsigned long long int min = head->data;
+    int min = head->data;
     *position = 0;
     head = head->next;
     while (head != NULL) {
@@ -159,7 +159,7 @@ void preOrderTravers(list *root) {
 * кладём его обратно в стек
 */
 void create_tree(list **head) {
-    unsigned long long int q, e;
+    int q, e;
     int position;
     while ((*head)->next != NULL) {
         list *tmp = malloc(sizeof(list));
@@ -196,16 +196,16 @@ void create_tree(list **head) {
 * функция чтения входного файла
 * check-сдвиг во входном файле(для "d\n" и "c\n")
 * */
-int read_input(FILE *INPUT, unsigned long long int *array, FILE *OUTPUT, int check) {
+int read_input(FILE *INPUT, int *array, FILE *OUTPUT, int check) {
     unsigned char buffer[MAXVAL];
-    long int b;
+    int b;
     int i = 0;
     fseek(INPUT, 0, SEEK_END);
     int size = (int)(ftell(INPUT) - check);
     if (size == 0)
         return 1;
     fseek(INPUT, check, SEEK_SET);
-    long int count = separate(size, &b);
+    int count = separate(size, &b);
     if (count == 0) {
         fread(buffer, sizeof(unsigned char), (size_t)b, INPUT);
         create_table(buffer, array, b);
@@ -279,11 +279,11 @@ int encryption(FILE *INPUT, FILE *OUTPUT, unsigned char *CodeOfSymbol, size_t *s
 * считываем исходный файл и записывает шифрованый текст в выходной файл
 */
 int create_out(FILE *INPUT, FILE *OUTPUT, int check) {
-    long int i = 0;
+    int i = 0;
     unsigned char CodeOfSymbol[MAXVAL]={8};
     size_t size_source = 0;
     fseek(INPUT, 0, SEEK_END);
-    long int size = ftell(INPUT) - check;
+    int size = ftell(INPUT) - check;
     fseek(INPUT, check, SEEK_SET);
     for (int j = 0; j < size; j++) {
         encryption(INPUT, OUTPUT,CodeOfSymbol, &size_source);
@@ -540,7 +540,7 @@ void decode(FILE *infile, FILE *outfile) {
 int coding(FILE *IN, FILE *OUT, int check){
     list *head;
     head = NULL;
-    unsigned long long int alphavite[MAXVAL] = { 0 };
+    int alphavite[MAXVAL] = { 0 };
     if (read_input(IN, alphavite, OUT, check)) {        //подсчитываем количество вхождений символов в файле
         return 0;
     }
